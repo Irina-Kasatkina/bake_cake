@@ -353,6 +353,7 @@
 						    	</div>
 						    	<div class="col-12 col-lg-4 d-flex justify-content-center justify-content-lg-end">
 							    	<div class="cake__card p-4 position-relative cake_grey">
+										{% verbatim %}
 							    		<span class="cake__badge rounded-pill">?</span>
 							    		<span>Количество уровней: {{ DATA.Levels[Levels] }}</span>
 								    	<span>Форма уровней: {{ DATA.Forms[Form] }}</span>
@@ -363,6 +364,7 @@
 							    			<li>Декор: {{ DATA.Decors[Decor] }}</li>
 								    	</ul>
 								    	<span>{{ Words === '' ? 'Без надписи' : Words }}</span>
+										{% endverbatim %}
 							    	</div>
 							    </div>
 						    </div>
