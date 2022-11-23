@@ -49,7 +49,7 @@
 					    <a class="nav-link fw-lighter cake_blue" href="#Contacts">Контакты</a>
 				    </li>
 				    <li class="nav-item d-block d-xl-flex flex-column align-items-end me-5">
-					    <small class="fw-lighter text-decoration-none fs_12 cake_blue">8 (495) 000-00-00</small>
+					    <small class="fw-lighter text-decoration-none fs_12 cake_blue">8 (495) 123-45-67</small>
 					    <small class="fw-lighter text-decoration-none fs_12 cake_blue">Пн - Вс 10:00—20:00</small>
 				    </li>
 				    <li class="nav-item d-flex align-items-center">
@@ -144,7 +144,7 @@
 		    		<div class="card border-0 cake__hover">
 		    			<a href="#" class="card-img-overlay"></a>
 			    		<img src="{% static 'img/image1.png' %}" alt="Торт на чаепитие" class="">
-				    	<span class="cake_blue mt-4 fw-lighter mb-4 text-center">{% static 'image1.png' %}</span>
+				    	<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На чаепитие</span>
 				    </div>
 			    </div>
 		    	<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
@@ -204,10 +204,10 @@
 		    			    <error-message name="form" class="from__alert"></error-message>
 		    			    <error-message name="topping" class="from__alert"></error-message>
 		    	    	</span>
-					    	<span class="z-index-1 fs_40 cake_pink text-end mt-5" id="cost">{{ Cost }}₽</span>
+					    	<span class="z-index-1 fs_30 cake_pink text-end mt-5" id="cost">{{ Cost }}₽</span>
 					    </div>
 					    <div class="d-flex align-items-center flex-wrap mb-3">
-					    	<span class="me-3 fs_40 cake_blue">Количество уровней</span>
+					    	<span class="me-3 fs_30 cake_blue">Количество уровней</span>
 					    	<v-field v-model="Levels" type="radio" name="lvls" id="num1" value="1" class="d-none cake__input"></v-field>
 					    	<label for="num1" class="mx-2 px-3 py-1 cake_grey cake__label">1</label>
 					    	<v-field v-model="Levels" type="radio" name="lvls" id="num2" value="2" class="d-none cake__input"></v-field>
@@ -217,7 +217,7 @@
 				    	</div>
 
 				    	<div class="d-flex align-items-center flex-wrap mb-3">
-				    		<span class="me-3 fs_40 cake_blue">Форма</span>
+				    		<span class="me-3 fs_30 cake_blue">Форма</span>
 				    		<v-field v-model="Form" type="radio" name="form" id="form1" value="1" class="d-none cake__input"></v-field>
 				    		<label for="form1" class="mx-2 px-3 py-1 cake_grey cake__label">Круг</label>
 				    		<v-field v-model="Form" type="radio" name="form" id="form2" value="2" class="d-none cake__input"></v-field>
@@ -226,7 +226,7 @@
 				    		<label for="form3" class="mx-2 px-3 py-1 cake_grey cake__label">Прямоугольник</label>
 				    	</div>
 				    	<div class="d-flex align-items-center flex-wrap mb-3">
-					    	<span class="me-3 fs_40 cake_blue">Топпинг</span>
+					    	<span class="me-3 fs_30 cake_blue">Топпинг</span>
 				    		<v-field v-model="Topping" type="radio" name="topping" id="topping1" value="1" class="d-none cake__input"></v-field>
 				    		<label for="topping1" class="mx-2 px-3 py-1 cake_grey cake__label">Без</label>
 				    		<v-field v-model="Topping" type="radio" name="topping" id="topping2" value="2" class="d-none cake__input"></v-field>
@@ -242,9 +242,9 @@
 				    		<v-field v-model="Topping" type="radio" name="topping" id="topping7" value="7" class="d-none cake__input"></v-field>
 				    		<label for="topping7" class="mx-2 px-3 py-1 cake_grey cake__label">Клубничный</label>
 				    	</div>
-				    	<h1 class="me-3 fs_40 cake_pink mb-3 mt-5">Дополнительно</h1>
+				    	<h1 class="me-3 fs_30 cake_pink mb-3 mt-5">Дополнительно</h1>
 				    	<div class="d-flex align-items-center flex-wrap mb-3">
-				    		<span class="me-3 fs_40 cake_blue">Ягоды</span>
+				    		<span class="me-3 fs_30 cake_blue">Ягоды</span>
 				    		<v-field v-model="Berries" type="radio" name="berries" id="berries1" value="1" class="d-none cake__input"></v-field>
 				    		<label for="berries1" class="mx-2 px-3 py-1 cake_grey cake__label">Ежевика</label>
 				    		<v-field v-model="Berries" type="radio" name="berries" id="berries2" value="2" class="d-none cake__input"></v-field>
@@ -255,7 +255,7 @@
 					    	<label for="berries4" class="mx-2 px-3 py-1 cake_grey cake__label">Клубника</label>
 					    </div>
 			    		<div class="d-flex align-items-center flex-wrap mb-3">
-			    			<span class="me-3 fs_40 cake_blue">Декор</span>
+			    			<span class="me-3 fs_30 cake_blue">Декор</span>
 					    	<v-field v-model="Decor" type="radio" name="decor" id="decor1" value="1" class="d-none cake__input"></v-field>
 				    		<label for="decor1" class="mx-2 px-3 py-1 cake_grey cake__label">Фисташки</label>
 				    		<v-field v-model="Decor" type="radio" name="decor" id="decor2" value="2" class="d-none cake__input"></v-field>
@@ -271,7 +271,7 @@
 				    	</div>
 				    	<div class="row mb-3">
 					    	<div class="col-5 col-md-4 col-lg-3">
-					    		<label class="me-3 fs_40 cake_blue" for="words">Надпись</label>
+					    		<label class="me-3 fs_30 cake_blue" for="words">Надпись</label>
 					    	</div>
 					    	<div class="col-7 col-md-8 col-lg-9 pt-2">
 				    			<input v-model="Words" :class="Words ? 'cake__border_blue': ''" type="text" name="words" id="words" placeholder="Например: «С днем рождения!»..." class="form-control cake__textinput">
@@ -342,9 +342,9 @@
 				    		</div>
 				    		<div class="row">
 				    			<div class="col-6 col-lg-4 d-flex flex-column">
-				    				<label for="name" class="my-1 fs_40 cake_blue">Имя</label>
-				    				<label for="phone" class="my-1 fs_40 cake_blue">Телефон</label>
-				    				<label for="email" class="my-1 fs_40 cake_blue">Почта</label>
+				    				<label for="name" class="my-1 fs_30 cake_blue">Имя</label>
+				    				<label for="phone" class="my-1 fs_30 cake_blue">Телефон</label>
+				    				<label for="email" class="my-1 fs_30 cake_blue">Почта</label>
 				    			</div>
 					    		<div class="col-6 col-lg-4 d-flex flex-column">
 					    			<div class="position-relative pb-1">
@@ -381,7 +381,7 @@
 							    </div>
 						    </div>
 					    	<div class="d-flex flex-column position-relative pb-4">
-					    		<h2 class="fs_40 cake_pink">Данные для доставки</h2>
+					    		<h2 class="fs_30 cake_pink">Данные для доставки</h2>
 					    		<span class="cake_pink mt-2 position-absolute bottom-0">
 						    		<error-message name="address" class="from__alert"></error-message>
 						    		<error-message name="date" class="from__alert"></error-message>
@@ -391,9 +391,9 @@
 
 				    		<div class="row">
 				    			<div class="col-6 col-lg-4 d-flex flex-column">
-				    				<label for="address" class="my-1 fs_40 cake_blue">Адрес</label>
-				    				<label for="date" class="my-1 fs_40 cake_blue">Дата</label>
-					    			<label for="time" class="my-1 fs_40 cake_blue">Время</label>
+				    				<label for="address" class="my-1 fs_30 cake_blue">Адрес</label>
+				    				<label for="date" class="my-1 fs_30 cake_blue">Дата</label>
+					    			<label for="time" class="my-1 fs_30 cake_blue">Время</label>
 					    		</div>
 						    	<div class="col-6 col-lg-4 d-flex flex-column">
 						    		<v-field v-model="Address" :class="Address ? 'cake__border_blue': ''" type="text" name="address" id="address" placeholder="Введите ваш адрес" class="form-control my-3 cake__textinput"></v-field>
@@ -408,7 +408,7 @@
 					    		</div>
 					    		<div class="col-12 col-md-6 d-flex flex-column align-items-center align-items-md-end mt-3 mt-md-0">
 					    			<div class="d-flex">
-					    				<span class="cake_pink fs_40 fw-bold me-2">Итого: {{ Cost }}₽</span>
+					    				<span class="cake_pink fs_30 fw-bold me-2">Итого: {{ Cost }}₽</span>
 					    			</div>
 						    		<button type="submit" class="btn btn_hover text-white rounded-pill mt-3 px-5 shadow-none cake__button cake__bg_pink">К оплате</button>
 						    	</div>
@@ -445,7 +445,7 @@
 		    	</div>
 		    	<div class="col-12 col-xl-6 d-flex flex-column align-items-start align-items-xl-end mt-3 mt-xl-0">
 		    		<a href="https://vk.com/devmanorg"><img src="{% static 'img/vk.svg' %}" alt="VK" class="mb-3 mb-xl-5"></a>
-		    		<small class="text-white fs_12">8 (495) 000-00-00</small>
+		    		<small class="text-white fs_12">8 (495) 123-45-67</small>
 		    		<small class="text-white fs_12">info@cakebake.ru</small>
 		    		<small class="text-white fs_12">Пн - Вс 10:00—20:00</small>
 		    	</div>
