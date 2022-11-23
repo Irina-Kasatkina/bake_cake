@@ -124,13 +124,11 @@ class Cake(models.Model):
     words = models.CharField(
         'надпись',
         max_length=50,
-        null=True,
         blank=True,
     )
 
     comment = models.TextField(
         'комментарий',
-        null=True,
         blank=True
     )
 
