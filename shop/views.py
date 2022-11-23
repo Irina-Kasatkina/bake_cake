@@ -55,3 +55,9 @@ def payment(request):
     context = {'price': price}
     
     return render(request, 'payment.html', context)
+
+
+@require_http_methods(['POST'])
+def lk(request):
+    context = {}
+    return render(request, 'lk.html', context)

@@ -20,7 +20,7 @@
             }
         }
 
-        var currency = "500 000.00";
+        var currency = "{{ price }}";
 
         document.getElementById('payment-amount').value= currency;
         document.getElementById('payment-btn-amount').textContent = currency;
@@ -29,7 +29,6 @@
 <body onload="setAmount()">
 
 <form class="payment-form" id="k24p-paymentForm">
-    {% csrf_token %}
 
     <div class="payment-amount">
         <div class="card-row">
@@ -76,11 +75,11 @@
         <span>Безопасная передача банковских данных</span>
     </div>
     <button class="payment-btn" type="submit">
-        Оплатить <span id="payment-btn-amount">{{ price }}</span> ₸
+        Оплатить <span id="payment-btn-amount">0,00</span> ₸
     </button>
 </form>
 
-<form id="data-form" action="" method="POST">
+<form id="data-form" action="{% url 'lk' %}" method="post">
     <input name="type" type="hidden" id="data-amount">
     <input name="cardData" type="hidden" id="data-card">
 </form>
