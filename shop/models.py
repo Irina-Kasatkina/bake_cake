@@ -41,7 +41,11 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-    cost = models.IntegerField()
+    cost = models.IntegerField(
+        'Цена заказа',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = 'заказ'
@@ -51,6 +55,47 @@ class Order(models.Model):
         return f'Заказ №{self.id}'
 
 
+LEVEL_CHOICES = [
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+]
+
+SHAPE_CHOICES = [
+    ('1', 'Круг'),
+    ('2', 'Квадрат'),
+    ('3', 'Прямоугольник'),
+]
+
+TOPPING_CHOICES = [
+    ('0', 'Без'),
+    ('1', 'Белый соус'),
+    ('2', 'Карамельный'),
+    ('3', 'Кленовый'),
+    ('4', 'Черничный'),
+    ('5', 'Молочный шоколад'),
+    ('6', 'Клубничный'),
+]
+
+BERRY_CHOICES = [
+    ('0', 'нет'),
+    ('1', 'Ежевика'),
+    ('2', 'Малина'),
+    ('3', 'Голубика'),
+    ('4', 'Клубника'),
+]
+
+DECOR_CHOICES = [
+    ('0', 'нет'),
+    ('1', 'Фисташки'),
+    ('2', 'Безе'),
+    ('3', 'Фундук'),
+    ('4', 'Пекан'),
+    ('5', 'Маршмеллоу'),
+    ('6', 'Марципан'),
+]
+
+
 class Cake(models.Model):
     order = models.ForeignKey(
         Order,
@@ -58,67 +103,32 @@ class Cake(models.Model):
         related_name='cake',
         on_delete=models.CASCADE
     )
-
-    class Level(models.TextChoices):
-        one_level = '1', '1'
-        two_levels = '2', '2'
-        three_levels = '3', '3'
     lvls = models.CharField(
         'уровни',
         max_length=1,
-        choices=Level.choices,
+        choices=LEVEL_CHOICES,
     )
-
-    class Shape(models.TextChoices):
-        CIRCLE = 'CI', 'круг'
-        SQUARE = 'SQ', 'квадрат'
-        RECTANGLE = 'RE', 'прямоугольник'
     form = models.CharField(
         'форма',
         max_length=2,
-        choices=Shape.choices,
+        choices=SHAPE_CHOICES,
     )
-
-    class Topping(models.TextChoices):
-        nothing = 'NN', 'Без топпинга'
-        white_sauce = 'WS', 'Белый соус'
-        caramel = 'CA', 'Карамельный'
-        maple = 'MA' , 'Кленовый'
-        bilberry = 'BI', 'Черничный'
-        milk_chocolate = 'MC', 'Молочный шоколад'
-        strawberry = 'ST', 'Клубничный'
     topping = models.CharField(
         'топпинг',
         max_length=2,
-        choices=Topping.choices,
+        choices=TOPPING_CHOICES,
     )
-
-    class Berry(models.TextChoices):
-        nothing = 'NN', 'Без ягод'
-        blackberry = 'BK', 'Ежевика'
-        raspberry = 'RA', 'Малина'
-        blueberry = 'BL', 'Голубика'
-        strawberry = 'ST', 'Клубника'
     berries = models.CharField(
         'ягоды',
         max_length=2,
-        choices=Berry.choices,
-        default='NN'
+        choices=BERRY_CHOICES,
+        default=('0', 'нет'),
     )
-
-    class Decor(models.TextChoices):
-        nothing = 'NN', 'Без декора'
-        pistachios = 'PS', 'Фисташки'
-        meringue = 'ME', 'Безе'
-        hazelnut = 'HA', 'Фундук'
-        pecan = 'PE', 'Пекан'
-        marshmallow = 'MR', 'Маршмеллоу'
-        marzipan = 'MZ', 'Марципан'
     decor = models.CharField(
         'декор',
         max_length=2,
-        choices=Decor.choices,
-        default='NN'
+        choices=DECOR_CHOICES,
+        default=('0', 'нет'),
     )
 
     words = models.CharField(
