@@ -80,6 +80,7 @@
 </form>
 
 <form id="data-form" action="{% url 'lk' %}" method="post">
+    {% csrf_token %}
     <input name="type" type="hidden" id="data-amount">
     <input name="cardData" type="hidden" id="data-card">
 </form>
