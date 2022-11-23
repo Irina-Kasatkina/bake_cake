@@ -24,6 +24,7 @@ from shop import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('payment', views.payment, name='payment'),
+    path('login', views.login, name='login'),
     path('admin/', admin.site.urls),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

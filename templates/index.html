@@ -83,7 +83,8 @@
 					    <div class="modal-header border-0 py-0">
 						    <label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
 					    </div>
-					    <form class="d-none">
+					    <form class="d-none" action="{% url 'login' %}" method="post">
+					    	{% csrf_token %}
 						    <input v-model="RegInput" type="text" name="REG">
 						    <button type="submit" ref="HiddenFormSubmitReg">reg</button>
 					    </form>
@@ -287,10 +288,10 @@
 			    	  </v-form>
 			      </section>
 			      <section class="row pt-header" id="step4" v-if="Designed">
-					{% endverbatim %}
+				{% endverbatim %}
 				      <form class="d-none" action="{% url 'payment' %}" method="post">
-						{% csrf_token %}
-						{% verbatim %}
+						    {% csrf_token %}
+				{% verbatim %}
 			    	  	<input v-model="Levels" value="1" type="radio" name="LEVELS">
 			    		  <input v-model="Levels" value="2" type="radio" name="LEVELS">
 			    		  <input v-model="Levels" value="3" type="radio" name="LEVELS">

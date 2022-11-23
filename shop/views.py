@@ -6,11 +6,16 @@ from shop.models import Cake, Client, Order
 
 
 def index(request):
-    # places = Place.objects.all()
-
+    print([f'{client.name} {client.phone}' for client in Client.objects.all()])
     context = {
     }
     return render(request, 'index.html', context)
+
+
+@require_http_methods(['POST'])
+def login(request):
+    print('Это login')
+    return render(request, 'index.html', {})
 
 
 def calculate_price(payload):
