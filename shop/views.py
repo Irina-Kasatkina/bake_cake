@@ -37,7 +37,7 @@ def login(request):
     return render(request, 'index.html', {})
 
 
-def calculate_price(lvls, form, topping, berries, decor, words):
+def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
     lvl_costs = (400, 750, 1100)
     form_costs = (600, 400, 1000)
     topping_costs = (0, 200, 180, 200, 300, 350, 200)
@@ -45,10 +45,17 @@ def calculate_price(lvls, form, topping, berries, decor, words):
     decor_costs = (0, 300, 400, 350, 300, 200, 280)
 
     price = lvl_costs[lvls - 1] + form_costs[form - 1] + topping_costs[topping - 1] \
-            + berries_costs[berries - 1] + decor_costs[decor - 1]
+            + berries_costs[berries] + decor_costs[decor]
     if words:
         price += 500
     return price
+
+
+def check_dellivery_time(date, time):
+    delivery_datetime = datetime.combine(date, time)
+    order_datetime  = datetime.now()
+    time_delta = delivery_datetime - order_datetime
+    return time_delta.days < 1
 
 
 @require_http_methods(['POST'])
@@ -98,6 +105,9 @@ def payment(request):
         words=cake.words
     )
 
+    if check_dellivery_time(order.date, order.time):
+        fast_delivery_coefficient = 1.2
+        price *= fast_delivery_coefficient
     order.cost = price
     order.save()
 
