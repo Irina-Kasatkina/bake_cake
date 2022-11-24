@@ -26,9 +26,6 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
-    # Client.objects.filter(phone='+79095916079').delete()
-    # print([f'{client.name} {client.phone}' for client in Client.objects.all()])
-    print(settings.DEBUG)
     context = {
         'is_debug': settings.DEBUG,
     }
@@ -38,7 +35,6 @@ def index(request):
 @require_http_methods(['POST'])
 def login(request):
     payload = dict(request.POST.items())
-    print(payload)
     client_serializer = ClientSerializer(data=payload)
     client_serializer.is_valid(raise_exception=True)
     client, created = Client.objects.get_or_create(
@@ -47,6 +43,31 @@ def login(request):
             'name': '',
             'email': '',
             'address': '',
+        },
+    )
+    context = {
+        'is_debug': settings.DEBUG,
+        'client_details': {
+            'phone': str(client.phone),
+            'name': client.name,
+            'email': client.email,
+        }
+    }
+    return render(request, 'lk.html', context)
+
+
+@require_http_methods(['POST'])
+def update_client(request):
+    payload = dict(request.POST.items())
+    print(payload)
+    client_serializer = ClientSerializer(data=payload)
+    client_serializer.is_valid(raise_exception=True)
+    client, created = Client.objects.get_or_create(
+        phone = client_serializer.validated_data['phone'],
+        defaults={
+            'name': client_serializer.validated_data['name'],
+            'email': client_serializer.validated_data['email'],
+            'address': client_serializer.validated_data['address'],
         },
     )
     context = {'phone': client.phone,

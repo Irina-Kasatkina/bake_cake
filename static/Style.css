@@ -129,6 +129,10 @@ li .cake__textinput:read-only {
 .fs_40 {
     font-size: 40px;
 }
+.py-21 {
+    padding-top: 0.21rem;
+    padding-bottom: 0.11rem;
+}
 .py-61 {
     padding-top: 0.61rem;
     padding-bottom: 0.61rem;

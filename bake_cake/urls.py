@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('payment', views.payment, name='payment'),
     path('login', views.login, name='login'),
+    path('update_client', views.update_client, name='update_client'),
     path('lk/', views.lk, name='lk'),
     path('admin/', admin.site.urls),
 ]

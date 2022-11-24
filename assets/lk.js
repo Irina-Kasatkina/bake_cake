@@ -7,9 +7,9 @@ Vue.createApp({
     data() {
         return {
             Edit: false,
-            Name: 'Ирина',
-            Phone: '8 909 000-00-00',
-            Email: 'nyam@gmail.com',
+            Name: jsClientDetails.name,
+            Phone: jsClientDetails.phone,
+            Email: jsClientDetails.email,
             Schema: {
                 name_format: (value) => {
                     const regex = /^[a-zA-Zа-яА-я]+$/
@@ -17,7 +17,6 @@ Vue.createApp({
                         return '⚠ Поле не может быть пустым';
                     }
                     if ( !regex.test(value)) {
-
                         return '⚠ Недопустимые символы в имени';
                     }
                     return true;
@@ -28,7 +27,6 @@ Vue.createApp({
                         return '⚠ Поле не может быть пустым';
                     }
                     if ( !regex.test(value)) {
-
                         return '⚠ Формат телефона нарушен';
                     }
                     return true;
@@ -39,7 +37,6 @@ Vue.createApp({
                         return '⚠ Поле не может быть пустым';
                     }
                     if ( !regex.test(value)) {
-
                         return '⚠ Формат почты нарушен';
                     }
                     return true;
