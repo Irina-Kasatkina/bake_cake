@@ -14,7 +14,9 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from rest_framework.serializers import Serializer, ModelSerializer
-from django.contrib.sites.models import Site
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 
 from shop.models import Cake, Client, Order
 
@@ -39,7 +41,6 @@ class CakeSerializer(ModelSerializer):
 def index(request):
     # Client.objects.filter(phone='+79095916079').delete()
     # print([f'{client.name} {client.phone}' for client in Client.objects.all()])
-    print(settings.DEBUG)
     context = {
         'is_debug': settings.DEBUG,
     }
@@ -51,20 +52,27 @@ def login(request):
     payload = dict(request.POST.items())
     client_serializer = ClientSerializer(data=payload)
     client_serializer.is_valid(raise_exception=True)
-    client, created = Client.objects.get_or_create(
-        phone = client_serializer.validated_data['phone'],
+    phone = client_serializer.validated_data['phone']
+    try:
+        user = User.objects.get(username=phone)
+    except User.DoesNotExist:
+        user = User.objects.create_user(
+            username=phone,
+            password='1234'
+        )
+    authenticate(username=user.username, password='1234')
+
+    Client.objects.get_or_create(
+        user=user,
+        phone=phone,
         defaults={
             'name': '',
             'email': '',
             'address': '',
         },
     )
-    context = {'phone': client.phone,
-        'name': client.name or '',
-        'email': client.email,
-        'address': client.address,
-    }
-    return render(request, 'lk.html', context)
+
+    return redirect(to=reverse('lk'))
 
 
 def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
@@ -99,8 +107,18 @@ def payment(request):
     order_serializer.is_valid(raise_exception=True)
     cake_serializer.is_valid(raise_exception=True)
     
+    phone = client_serializer.validated_data['phone']
+    
+    try:
+        user = User.objects.get(username=phone)
+    except User.DoesNotExist:
+        user = User.objects.create_user(
+            username=phone,
+            password='1234'
+        )
     client, created = Client.objects.get_or_create(
-        phone = client_serializer.validated_data['phone'],
+        user = user,
+        phone = phone,
         defaults={
             'name': client_serializer.validated_data['name'],
             'email': client_serializer.validated_data['email'],
@@ -170,6 +188,7 @@ def payment(request):
     )
 
 
+@login_required
 def lk(request):
     context = {
     }
