@@ -1,8 +1,19 @@
+import requests
+import base64
+
+from django.urls import reverse
+
+from environs import Env
+
+env = Env()
+env.read_env()
+
 from datetime import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from rest_framework.serializers import Serializer, ModelSerializer
+from django.contrib.sites.models import Site
 
 from shop.models import Cake, Client, Order
 
@@ -35,7 +46,6 @@ def index(request):
 @require_http_methods(['POST'])
 def login(request):
     payload = dict(request.POST.items())
-    print(payload)
     client_serializer = ClientSerializer(data=payload)
     client_serializer.is_valid(raise_exception=True)
     client, created = Client.objects.get_or_create(
@@ -127,13 +137,37 @@ def payment(request):
         price *= fast_delivery_coefficient
     order.cost = price
     order.save()
-
-    context = {'price': price}
     
-    return render(request, 'payment.html', context)
+    domain = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])[0]
+
+    success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
+    data = {    
+        'merchantId': env('KASSA_LOGIN'),
+        'amount': price*100,
+        'successUrl': success_url,
+        'returnUrl': success_url,
+        'description': 'Test payment for {}'.format(client.email),
+        'demo': True,
+    }
+    
+    login_pass = '{}:{}'.format(env('KASSA_LOGIN'), env('KASSA_PASSWORD'))
+    
+    token = base64.b64encode(str.encode(login_pass)).decode('utf-8')
+    headers = {'Authorization': f'Basic {token}'}
+
+    response = requests.post(
+        'https://ecommerce.pult24.kz/payment/create',
+        headers=headers,
+        json=data,
+    )
+    response.raise_for_status()
+    
+    return redirect(
+        to=response.json()['url'],
+    )
 
 
-@require_http_methods(['POST'])
 def lk(request):
-    context = {}
+    context = {
+    }
     return render(request, 'lk.html', context)
