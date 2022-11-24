@@ -8,7 +8,7 @@
     		<div><img src="img/Cake2.png" alt=""></div>
     	</div>
     	<div class="col-12 col-xxl-6 d-flex flex-column justify-content-center align-items-center align-items-xxl-start" id="LK">
-    		<form class="d-none" action="{% url 'update_data' %}" method="POST">
+    		<form class="d-none" action="{% url 'lk' %}" method="POST">
 	    		{% csrf_token %}
 	    		<input v-model="Name" name="NAME">
 	    		<input v-model="Phone" name="PHONE">
