@@ -36,9 +36,8 @@ class Order(models.Model):
 
     date = models.DateField('Дата доставки')
     time = models.TimeField('Время доставки')
-    comment = models.TextField(
+    delivcomments = models.TextField(
         'Комментарий курьеру',
-        null=True,
         blank=True
     )
     cost = models.IntegerField(
@@ -137,7 +136,7 @@ class Cake(models.Model):
         blank=True,
     )
 
-    comment = models.TextField(
+    comments = models.TextField(
         'комментарий',
         blank=True
     )
