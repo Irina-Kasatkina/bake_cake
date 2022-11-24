@@ -10,6 +10,7 @@ env.read_env()
 
 from datetime import datetime
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from rest_framework.serializers import Serializer, ModelSerializer
@@ -36,9 +37,11 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
-    Client.objects.filter(phone='+79095916079').delete()
-    print([f'{client.name} {client.phone}' for client in Client.objects.all()])
+    # Client.objects.filter(phone='+79095916079').delete()
+    # print([f'{client.name} {client.phone}' for client in Client.objects.all()])
+    print(settings.DEBUG)
     context = {
+        'is_debug': settings.DEBUG,
     }
     return render(request, 'index.html', context)
 
