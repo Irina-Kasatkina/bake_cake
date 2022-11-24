@@ -1,11 +1,18 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django.contrib.auth.models import User
 
 
 class Client(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+    )
     name = models.CharField(
         'Имя',
         blank=True,
+        null=True,
         max_length=50
     )
     phone = PhoneNumberField(
@@ -16,11 +23,13 @@ class Client(models.Model):
         'Почта',
         blank=True,
         max_length=100,
+        null=True,
         db_index=True,
     )
     address = models.TextField(
         'Адрес',
         blank=True,
+        null=True,
     )
 
     class Meta:
