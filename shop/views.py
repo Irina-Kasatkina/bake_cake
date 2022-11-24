@@ -1,7 +1,7 @@
 import requests
 import base64
 
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from environs import Env
 
@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from rest_framework.serializers import Serializer, ModelSerializer
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
 from shop.models import Cake, Client, Order
@@ -48,19 +48,19 @@ def index(request):
 
 
 @require_http_methods(['POST'])
-def login(request):
+def login_page(request):
     payload = dict(request.POST.items())
     client_serializer = ClientSerializer(data=payload)
     client_serializer.is_valid(raise_exception=True)
     phone = client_serializer.validated_data['phone']
     try:
-        user = User.objects.get(username=phone)
+        user = authenticate(username=phone, password='1234')
     except User.DoesNotExist:
         user = User.objects.create_user(
             username=phone,
             password='1234'
         )
-    authenticate(username=user.username, password='1234')
+    login(request, user)
 
     Client.objects.get_or_create(
         user=user,
@@ -108,14 +108,15 @@ def payment(request):
     cake_serializer.is_valid(raise_exception=True)
     
     phone = client_serializer.validated_data['phone']
-    
     try:
-        user = User.objects.get(username=phone)
+        user = authenticate(username=phone, password='1234')
     except User.DoesNotExist:
         user = User.objects.create_user(
             username=phone,
             password='1234'
         )
+    login(request, user)
+    
     client, created = Client.objects.get_or_create(
         user = user,
         phone = phone,
@@ -190,6 +191,18 @@ def payment(request):
 
 @login_required
 def lk(request):
+    
+    user = request.user
+    client = Client.objects.get(user=user)
+    
+    if request.method == 'POST':
+        payload = dict(request.POST.items())
+        client.name = payload['NAME']
+        client.phone = payload['PHONE']
+        client.email = payload['EMAIL']
+        client.save()
+        
     context = {
+        'client': client
     }
     return render(request, 'lk.html', context)

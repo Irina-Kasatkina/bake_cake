@@ -8,7 +8,7 @@
     		<div><img src="img/Cake2.png" alt=""></div>
     	</div>
     	<div class="col-12 col-xxl-6 d-flex flex-column justify-content-center align-items-center align-items-xxl-start" id="LK">
-    		<form class="d-none">
+    		<form class="d-none" action="{% url 'update_data' %}" method="POST">
 	    		{% csrf_token %}
 	    		<input v-model="Name" name="NAME">
 	    		<input v-model="Phone" name="PHONE">
@@ -44,22 +44,22 @@
 			    	<ul class="list-group">
 			    		<li class="list-group-item border-0 py-61 position-relative">
 				    		<v-field v-model="Name" type="text" name="name_format" id="name" :readonly="!Edit" class="form-control my-2 i cake__textinput">
-				    			{{ name }}
+				    			{{ client.name }}
 			    			</v-field>
 				    		<error-message name="name_format" class="position-absolute bottom-0 cake_pink fs_12"></error-message>
 			    		</li>
 			    		<li class="list-group-item border-0 py-61 position-relative">
 			    			<v-field v-model="Phone" type="text" name="phone_format" id="phone" :readonly="!Edit" class="form-control my-2 cake__textinput">
-				    		  {{ phone }}
+				    		  {{ client.phone }}
 				    		</v-field>
 				    		<error-message name="phone_format" class="position-absolute bottom-0 cake_pink fs_12"></error-message>
 			    		</li>
 			    		<li class="list-group-item border-0 py-61 position-relative">
 			    			<v-field v-model="Email" type="text" name="email_format" id="email" :readonly="!Edit" class="form-control my-2 cake__textinput">
-			    				{{ email }}
+			    				{{ client.email }}
 				    		</v-field>
 			    			<error-message name="email_format" class="position-absolute bottom-0 cake_pink fs_12">
-			    				{{ address }}
+			    				{{ client.address }}
 			    			</error-message>
 			    		</li>
 			    	</ul>

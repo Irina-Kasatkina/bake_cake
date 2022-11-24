@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 
 
 class Client(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
+        related_name='client',
         on_delete=models.CASCADE,
         null=True,
     )
