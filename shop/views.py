@@ -37,8 +37,18 @@ def login(request):
     return render(request, 'index.html', {})
 
 
-def calculate_price(payload):
-    return 1000
+def calculate_price(lvls, form, topping, berries, decor, words):
+    lvl_costs = (400, 750, 1100)
+    form_costs = (600, 400, 1000)
+    topping_costs = (0, 200, 180, 200, 300, 350, 200)
+    berries_costs = (0, 400, 300, 450, 500)
+    decor_costs = (0, 300, 400, 350, 300, 200, 280)
+
+    price = lvl_costs[lvls - 1] + form_costs[form - 1] + topping_costs[topping - 1] \
+            + berries_costs[berries - 1] + decor_costs[decor - 1]
+    if words:
+        price += 500
+    return price
 
 
 @require_http_methods(['POST'])
@@ -51,8 +61,6 @@ def payment(request):
     client_serializer.is_valid(raise_exception=True)
     order_serializer.is_valid(raise_exception=True)
     cake_serializer.is_valid(raise_exception=True)
-
-    price = calculate_price(payload)
     
     client, created = Client.objects.get_or_create(
         phone = client_serializer.validated_data['phone'],
@@ -68,19 +76,30 @@ def payment(request):
         date = order_serializer.validated_data['date'],
         time = order_serializer.validated_data['time'],
         delivcomments = order_serializer.validated_data['delivcomments'],
-        cost = price,
     )
     
-    Cake.objects.create(
+    cake = Cake.objects.create(
         order=order,
         lvls=cake_serializer.validated_data['lvls'],
         form=cake_serializer.validated_data['form'],
         topping=cake_serializer.validated_data['topping'],
-        berries=cake_serializer.validated_data['berries'],
-        decor=cake_serializer.validated_data['decor'],
-        words=cake_serializer.validated_data['words'],
-        comments=cake_serializer.validated_data['comments'],
+        berries=cake_serializer.validated_data.get('berries', 0),
+        decor=cake_serializer.validated_data.get('decor', 0),
+        words=cake_serializer.validated_data.get('words', ''),
+        comments=cake_serializer.validated_data.get('comments', ''),
     )
+
+    price = calculate_price(
+        lvls=cake.lvls,
+        form=cake.form,
+        topping=cake.topping,
+        berries=cake.berries,
+        decor=cake.decor,
+        words=cake.words
+    )
+
+    order.cost = price
+    order.save()
 
     context = {'price': price}
     
