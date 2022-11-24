@@ -53,9 +53,8 @@ def login_page(request):
     client_serializer = ClientSerializer(data=payload)
     client_serializer.is_valid(raise_exception=True)
     phone = client_serializer.validated_data['phone']
-    try:
-        user = authenticate(username=phone, password='1234')
-    except User.DoesNotExist:
+    user = authenticate(username=phone, password='1234')
+    if not user:
         user = User.objects.create_user(
             username=phone,
             password='1234'
@@ -108,9 +107,8 @@ def payment(request):
     cake_serializer.is_valid(raise_exception=True)
     
     phone = client_serializer.validated_data['phone']
-    try:
-        user = authenticate(username=phone, password='1234')
-    except User.DoesNotExist:
+    user = authenticate(username=phone, password='1234')
+    if not user:
         user = User.objects.create_user(
             username=phone,
             password='1234'
