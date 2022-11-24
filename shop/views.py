@@ -25,6 +25,7 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
+    Client.objects.filter(phone='+79095916079').delete()
     print([f'{client.name} {client.phone}' for client in Client.objects.all()])
     context = {
     }
@@ -33,8 +34,24 @@ def index(request):
 
 @require_http_methods(['POST'])
 def login(request):
-    print('Это login')
-    return render(request, 'index.html', {})
+    payload = dict(request.POST.items())
+    print(payload)
+    client_serializer = ClientSerializer(data=payload)
+    client_serializer.is_valid(raise_exception=True)
+    client, created = Client.objects.get_or_create(
+        phone = client_serializer.validated_data['phone'],
+        defaults={
+            'name': '',
+            'email': '',
+            'address': '',
+        },
+    )
+    context = {'phone': client.phone,
+        'name': client.name or '',
+        'email': client.email,
+        'address': client.address,
+    }
+    return render(request, 'lk.html', context)
 
 
 def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
@@ -44,8 +61,8 @@ def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
     berries_costs = (0, 400, 300, 450, 500)
     decor_costs = (0, 300, 400, 350, 300, 200, 280)
 
-    price = lvl_costs[lvls - 1] + form_costs[form - 1] + topping_costs[topping - 1] \
-            + berries_costs[berries] + decor_costs[decor]
+    price = (lvl_costs[lvls - 1] + form_costs[form - 1] + topping_costs[topping - 1] +
+             berries_costs[berries] + decor_costs[decor])
     if words:
         price += 500
     return price

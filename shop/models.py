@@ -5,6 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Client(models.Model):
     name = models.CharField(
         'Имя',
+        blank=True,
         max_length=50
     )
     phone = PhoneNumberField(
@@ -13,10 +14,14 @@ class Client(models.Model):
     )
     email = models.EmailField(
         'Почта',
+        blank=True,
         max_length=100,
         db_index=True,
     )
-    address = models.TextField('Адрес')
+    address = models.TextField(
+        'Адрес',
+        blank=True,
+    )
 
     class Meta:
         verbose_name = 'клиент'
