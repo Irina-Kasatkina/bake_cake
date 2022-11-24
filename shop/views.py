@@ -1,9 +1,23 @@
+import base64
+import requests
+from contextlib import suppress
+
+from django.urls import reverse, reverse_lazy
+
+from environs import Env
+
+env = Env()
+env.read_env()
+
 from datetime import datetime
 
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from rest_framework.serializers import Serializer, ModelSerializer
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 from shop.models import Cake, Client, Order
 
@@ -26,6 +40,8 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
+    Client.objects.filter(phone='+79095916079').delete()
+    print([f'{client.name} {client.phone}' for client in Client.objects.all()])
     context = {
         'is_debug': settings.DEBUG,
     }
@@ -33,49 +49,61 @@ def index(request):
 
 
 @require_http_methods(['POST'])
-def login(request):
+def login_page(request):
     payload = dict(request.POST.items())
     client_serializer = ClientSerializer(data=payload)
     client_serializer.is_valid(raise_exception=True)
-    client, created = Client.objects.get_or_create(
-        phone = client_serializer.validated_data['phone'],
+    phone = client_serializer.validated_data['phone']
+    user = authenticate(username=phone, password='1234')
+    if not user:
+        user = User.objects.create_user(
+            username=phone,
+            password='1234'
+        )
+    login(request, user)
+
+    client = Client.objects.get_or_create(
+        user=user,
+        phone=phone,
         defaults={
             'name': '',
             'email': '',
             'address': '',
         },
     )
-    context = {
-        'is_debug': settings.DEBUG,
-        'client_details': {
-            'phone': str(client.phone),
-            'name': client.name,
-            'email': client.email,
-        }
-    }
-    return render(request, 'lk.html', context)
+
+    # context = {
+    #     'is_debug': settings.DEBUG,
+    #     'client_details': {
+    #         'phone': str(phone),
+    #         'name': client.name,
+    #         'email': client.email,
+    #     }
+    # }
+    # return render(request, 'lk.html', context)
+    return redirect(to=reverse('lk'))
 
 
-@require_http_methods(['POST'])
-def update_client(request):
-    payload = dict(request.POST.items())
-    print(payload)
-    client_serializer = ClientSerializer(data=payload)
-    client_serializer.is_valid(raise_exception=True)
-    client, created = Client.objects.get_or_create(
-        phone = client_serializer.validated_data['phone'],
-        defaults={
-            'name': client_serializer.validated_data['name'],
-            'email': client_serializer.validated_data['email'],
-            'address': client_serializer.validated_data['address'],
-        },
-    )
-    context = {'phone': client.phone,
-        'name': client.name or '',
-        'email': client.email,
-        'address': client.address,
-    }
-    return render(request, 'lk.html', context)
+# @require_http_methods(['POST'])
+# def update_client(request):
+#     payload = dict(request.POST.items())
+#     print(payload)
+#     client_serializer = ClientSerializer(data=payload)
+#     client_serializer.is_valid(raise_exception=True)
+#     client, created = Client.objects.get_or_create(
+#         phone = client_serializer.validated_data['phone'],
+#         defaults={
+#             'name': client_serializer.validated_data['name'],
+#             'email': client_serializer.validated_data['email'],
+#             'address': client_serializer.validated_data['address'],
+#         },
+#     )
+#     context = {'phone': client.phone,
+#         'name': client.name or '',
+#         'email': client.email,
+#         'address': client.address,
+#     }
+#     return render(request, 'lk.html', context)
 
 
 def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
@@ -110,8 +138,18 @@ def payment(request):
     order_serializer.is_valid(raise_exception=True)
     cake_serializer.is_valid(raise_exception=True)
     
+    phone = client_serializer.validated_data['phone']
+    user = authenticate(username=phone, password='1234')
+    if not user:
+        user = User.objects.create_user(
+            username=phone,
+            password='1234'
+        )
+    login(request, user)
+    
     client, created = Client.objects.get_or_create(
-        phone = client_serializer.validated_data['phone'],
+        user = user,
+        phone = phone,
         defaults={
             'name': client_serializer.validated_data['name'],
             'email': client_serializer.validated_data['email'],
@@ -151,13 +189,50 @@ def payment(request):
         price *= fast_delivery_coefficient
     order.cost = price
     order.save()
-
-    context = {'price': price}
     
-    return render(request, 'payment.html', context)
+    domain = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])[0]
+
+    success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
+    data = {    
+        'merchantId': env('KASSA_LOGIN'),
+        'amount': price*100,
+        'successUrl': success_url,
+        'returnUrl': success_url,
+        'description': 'Test payment for {}'.format(client.email),
+        'demo': True,
+    }
+    
+    login_pass = '{}:{}'.format(env('KASSA_LOGIN'), env('KASSA_PASSWORD'))
+    
+    token = base64.b64encode(str.encode(login_pass)).decode('utf-8')
+    headers = {'Authorization': f'Basic {token}'}
+
+    response = requests.post(
+        'https://ecommerce.pult24.kz/payment/create',
+        headers=headers,
+        json=data,
+    )
+    response.raise_for_status()
+    
+    return redirect(
+        to=response.json()['url'],
+    )
 
 
-@require_http_methods(['POST'])
+@login_required
 def lk(request):
-    context = {}
+    
+    user = request.user
+    client = Client.objects.get(user=user)
+    
+    if request.method == 'POST':
+        payload = dict(request.POST.items())
+        client.name = payload['NAME']
+        client.phone = payload['PHONE']
+        client.email = payload['EMAIL']
+        client.save()
+        
+    context = {
+        'client': client
+    }
     return render(request, 'lk.html', context)

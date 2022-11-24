@@ -17,6 +17,7 @@
 					    <input v-model="RegInput" type="text" name="phone">
 					    <button type="submit" ref="HiddenFormSubmitReg">reg</button>
 				    </form>
+					{% verbatim %}
 				    <v-form :validation-schema="RegSchema" class="modal-body position-relative d-flex flex-column align-items-center px-5 pb-4" @submit="RegSubmit">
 					    <v-field v-if="RegInput !== 'Регистрация успешна'" v-model="RegInput" name="reg" type="text" id="reg" :placeholder="Step === `Number` ? `Введите ваш номер` : `Введите код`" class="form-control cake__textinput"></v-field>
 					    <v-field v-if="Step === 'Number'" v-model="RegInput" type="phone" name="phone_format" class="d-none"></v-field>
@@ -29,23 +30,19 @@
 							      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 							      <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 						      </svg>
-                  {% verbatim %}
 						        {{ Step === 'Number' ? 'Введите номер' : 'Введите код' }}
-						      {% endverbatim %}
 						    </error-message>
 						  </small>
 					    <error-message name="phone_format" class="fs_12 cake_pink text-center position-absolute bottom-0"></error-message>
 					    <error-message name="code_format" class="fs_12 cake_pink text-center position-absolute bottom-0"></error-message>
 				    </v-form>
-
 				    <div class="modal-footer d-flex flex-column justify-content-between align-items-center text-center border-0 mx-5">
 					    <p class="fs_12 cake_grey">
-                {% verbatim %}
 					        {{ Step === 'Number' ? 'Нажимая на кнопку, вы соглашаетесь на обработку персональных данных в соответствии с политикой конфиденциальности' : Step === 'Code' ? 'Осталось времени: 05:00' : '' }}
-					      {% endverbatim %}
 					    </p>
 					    <a href="#" v-if="Step === `Code`" @click.prevent="ToRegStep1" class="text-decoration-none cake_pink fs_12">изменить данные</a>
 				    </div>
+					{% endverbatim %}
 			    </div>
 		    </div>
 	    </aside>
