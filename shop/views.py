@@ -40,8 +40,6 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
-    Client.objects.filter(phone='+79095916079').delete()
-    print([f'{client.name} {client.phone}' for client in Client.objects.all()])
     context = {
         'is_debug': settings.DEBUG,
     }
@@ -62,7 +60,7 @@ def login_page(request):
         )
     login(request, user)
 
-    client = Client.objects.get_or_create(
+    client, created = Client.objects.get_or_create(
         user=user,
         phone=phone,
         defaults={
@@ -72,38 +70,15 @@ def login_page(request):
         },
     )
 
-    # context = {
-    #     'is_debug': settings.DEBUG,
-    #     'client_details': {
-    #         'phone': str(phone),
-    #         'name': client.name,
-    #         'email': client.email,
-    #     }
-    # }
-    # return render(request, 'lk.html', context)
-    return redirect(to=reverse('lk'))
-
-
-# @require_http_methods(['POST'])
-# def update_client(request):
-#     payload = dict(request.POST.items())
-#     print(payload)
-#     client_serializer = ClientSerializer(data=payload)
-#     client_serializer.is_valid(raise_exception=True)
-#     client, created = Client.objects.get_or_create(
-#         phone = client_serializer.validated_data['phone'],
-#         defaults={
-#             'name': client_serializer.validated_data['name'],
-#             'email': client_serializer.validated_data['email'],
-#             'address': client_serializer.validated_data['address'],
-#         },
-#     )
-#     context = {'phone': client.phone,
-#         'name': client.name or '',
-#         'email': client.email,
-#         'address': client.address,
-#     }
-#     return render(request, 'lk.html', context)
+    context = {
+        'is_debug': settings.DEBUG,
+        'client_details': {
+            'phone': str(phone),
+            'name': client.name,
+            'email': client.email,
+        }
+    }
+    return render(request, 'lk.html', context)
 
 
 def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
@@ -227,12 +202,21 @@ def lk(request):
     
     if request.method == 'POST':
         payload = dict(request.POST.items())
-        client.name = payload['NAME']
-        client.phone = payload['PHONE']
-        client.email = payload['EMAIL']
+        client_serializer = ClientSerializer(data=payload)
+        client_serializer.is_valid(raise_exception=True)
+        client.name = client_serializer.validated_data['name']
+        client.phone = client_serializer.validated_data['phone']
+        client.email = client_serializer.validated_data['email']
+        if payload.get('address'):
+            client.address = client_serializer.validated_data['address']
         client.save()
         
     context = {
-        'client': client
+        'is_debug': settings.DEBUG,
+        'client_details': {
+            'phone': str(client.phone),
+            'name': client.name,
+            'email': client.email,
+        }
     }
     return render(request, 'lk.html', context)
