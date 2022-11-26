@@ -18,12 +18,12 @@ class CakeInline(admin.TabularInline):
 
 
 @admin.register(Cake)
-class Cake(admin.ModelAdmin):
+class CakeAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Client)
-class Client(admin.ModelAdmin):
+class ClientAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'phone',
@@ -38,7 +38,7 @@ class Client(admin.ModelAdmin):
 
 
 @admin.register(Order)
-class Order(ImportExportMixin, admin.ModelAdmin):
+class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_classes = [OrderResource]
     list_display = [
         'id',
@@ -63,7 +63,7 @@ class Order(ImportExportMixin, admin.ModelAdmin):
     inlines = [CakeInline]
 
 @admin.register(Source)
-class Source(admin.ModelAdmin):
+class SourceAdmin(admin.ModelAdmin):
     list_display = [
         'source_name',
         'count',
