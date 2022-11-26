@@ -23,8 +23,8 @@ from shop import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('payment', views.payment, name='payment'),
     path('login', views.login_page, name='login'),
+    path('payment', views.payment, name='payment'),
     path('lk/', views.lk, name='lk'),
     path('admin/', admin.site.urls),
 ]

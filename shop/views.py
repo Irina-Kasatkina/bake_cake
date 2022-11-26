@@ -1,25 +1,20 @@
 import base64
 import requests
 from contextlib import suppress
-
-from django.urls import reverse, reverse_lazy
-
-from environs import Env
-
-env = Env()
-env.read_env()
-
 from datetime import datetime
 
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.views.decorators.http import require_http_methods
-from rest_framework.serializers import Serializer, ModelSerializer
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.decorators.http import require_http_methods
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from shop.models import Cake, Client, Order
+
 
 class ClientSerializer(ModelSerializer):
     class Meta:
@@ -30,20 +25,37 @@ class ClientSerializer(ModelSerializer):
 class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
-        exclude = ['client',]
+        exclude = ['client']
 
 
 class CakeSerializer(ModelSerializer):
     class Meta:
         model = Cake
-        exclude = ['order',]
+        exclude = ['order']
 
 
 def index(request):
-    context = {
-        'is_debug': settings.DEBUG,
-    }
+    client = ''
+    phone = request.COOKIES.get('phone')
+    if phone:
+        with suppress(ObjectDoesNotExist):
+            client = Client.objects.get(phone=phone)
+
+    context = get_context(client)
     return render(request, 'index.html', context)
+
+
+def get_context(client):
+    return {
+        'is_debug': settings.DEBUG,
+        'client_details': {
+            'phone': str(client.phone) if client else '',
+            'name': client.name if client else '',
+            'email': client.email if client else '',
+            'address': client.address if client else '',
+            'client_label': '' if (not client or not client.name) else client.name[:1],
+        }
+    }
 
 
 @require_http_methods(['POST'])
@@ -69,16 +81,9 @@ def login_page(request):
             'address': '',
         },
     )
-
-    context = {
-        'is_debug': settings.DEBUG,
-        'client_details': {
-            'phone': str(phone),
-            'name': client.name,
-            'email': client.email,
-        }
-    }
-    return render(request, 'lk.html', context)
+    response = render(request, 'lk.html', get_context(client))
+    response.set_cookie('phone', str(phone))
+    return response
 
 
 def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
@@ -165,19 +170,19 @@ def payment(request):
     order.cost = price
     order.save()
     
-    domain = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])[0]
+    domain = settings.ALLOWED_HOSTS[0]
 
     success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
     data = {    
-        'merchantId': env('KASSA_LOGIN'),
+        'merchantId': settings.KASSA_LOGIN,
         'amount': price*100,
         'successUrl': success_url,
         'returnUrl': success_url,
         'description': 'Test payment for {}'.format(client.email),
         'demo': True,
     }
-    
-    login_pass = '{}:{}'.format(env('KASSA_LOGIN'), env('KASSA_PASSWORD'))
+
+    login_pass = f'{settings.KASSA_LOGIN}:{settings.KASSA_PASSWORD}'
     
     token = base64.b64encode(str.encode(login_pass)).decode('utf-8')
     headers = {'Authorization': f'Basic {token}'}
@@ -187,8 +192,7 @@ def payment(request):
         headers=headers,
         json=data,
     )
-    response.raise_for_status()
-    
+    response.raise_for_status()   
     return redirect(
         to=response.json()['url'],
     )
@@ -210,13 +214,5 @@ def lk(request):
         if payload.get('address'):
             client.address = client_serializer.validated_data['address']
         client.save()
-        
-    context = {
-        'is_debug': settings.DEBUG,
-        'client_details': {
-            'phone': str(client.phone),
-            'name': client.name,
-            'email': client.email,
-        }
-    }
-    return render(request, 'lk.html', context)
+
+    return render(request, 'lk.html', get_context(client))

@@ -46,7 +46,6 @@ Vue.createApp({
                         return true;
                     }
                     if ( !regex.test(value)) {
-
                         return '⚠ Формат имени нарушен';
                     }
                     return true;
@@ -57,7 +56,6 @@ Vue.createApp({
                         return true;
                     }
                     if ( !regex.test(value)) {
-
                         return '⚠ Формат почты нарушен';
                     }
                     return true;

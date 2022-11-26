@@ -163,3 +163,9 @@ INTERNAL_IPS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# This project variables
+
+KASSA_LOGIN = env('KASSA_LOGIN')
+
+KASSA_PASSWORD = env('KASSA_PASSWORD')
