@@ -167,7 +167,7 @@ def payment(request):
     
     domain = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])[0]
 
-    success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
+    success_url = 'http://{domain}{path}'.format(domain=domain, path=reverse('lk'))
     data = {    
         'merchantId': env('KASSA_LOGIN'),
         'amount': price*100,
