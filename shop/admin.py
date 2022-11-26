@@ -1,6 +1,16 @@
 from django.contrib import admin
+from import_export import resources, fields
+from import_export.admin import ImportExportMixin
 
 from .models import Cake, Client, Order
+
+
+class OrderResource(resources.ModelResource):
+    class Meta:
+        model = Order
+        fields = ('id', 'client__name', 'client__phone', 'date', 'time', 'cost',)
+        export_order = ('id', 'client__name', 'client__phone', 'date', 'time', 'cost',)
+
 
 class CakeInline(admin.TabularInline):
     model = Cake
@@ -28,7 +38,8 @@ class Client(admin.ModelAdmin):
 
 
 @admin.register(Order)
-class Order(admin.ModelAdmin):
+class Order(ImportExportMixin, admin.ModelAdmin):
+    resource_classes = [OrderResource]
     list_display = [
         'id',
         'get_name',
