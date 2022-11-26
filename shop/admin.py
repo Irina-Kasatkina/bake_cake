@@ -1,11 +1,12 @@
 from django.contrib import admin
 from import_export import resources, fields
-from import_export.admin import ImportExportMixin
+from import_export.admin import ExportMixin
 
 from .models import Cake, Client, Order
 
 
 class OrderResource(resources.ModelResource):
+    
     class Meta:
         model = Order
         fields = ('id', 'client__name', 'client__phone', 'date', 'time', 'cost',)
@@ -38,7 +39,10 @@ class Client(admin.ModelAdmin):
 
 
 @admin.register(Order)
-class Order(ImportExportMixin, admin.ModelAdmin):
+class Order(ExportMixin, admin.ModelAdmin):
+    
+    ExportMixin.to_encoding = 'utf-8-sig'
+    
     resource_classes = [OrderResource]
     list_display = [
         'id',
