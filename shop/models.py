@@ -2,6 +2,16 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 
+class Source(models.Model):
+    source_name = models.CharField(
+        max_length=20,
+    )
+    count = models.IntegerField(
+        default=0,
+    )
+
+    def __str__(self):
+        return f'{self.source_name}'
 
 class Client(models.Model):
     user = models.OneToOneField(
