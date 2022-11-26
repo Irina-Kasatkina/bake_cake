@@ -2,6 +2,7 @@ import base64
 import requests
 from contextlib import suppress
 from datetime import datetime
+from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
@@ -54,7 +55,8 @@ def get_context(client):
             'email': client.email if client else '',
             'address': client.address if client else '',
             'client_label': '' if (not client or not client.name) else client.name[:1],
-        }
+        },
+        'orders': client.client_orders.all(),
     }
 
 
@@ -170,9 +172,12 @@ def payment(request):
     order.cost = price
     order.save()
     
-    domain = settings.ALLOWED_HOSTS[0]
-
-    success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
+    domain = settings.ALLOWED_HOSTS[0]    
+    if settings.DEBUG:
+        success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
+    else:
+        success_url = 'http://{domain}{path}'.format(domain=domain, path=reverse('lk'))
+    
     data = {    
         'merchantId': settings.KASSA_LOGIN,
         'amount': price*100,
@@ -192,7 +197,14 @@ def payment(request):
         headers=headers,
         json=data,
     )
-    response.raise_for_status()   
+    response.raise_for_status()
+    
+    parsed_url = urlparse(response.json()['url'])
+    payment_id = parse_qs(parsed_url.query)['id'][0]
+
+    order.payment_id = payment_id
+    order.save()
+    
     return redirect(
         to=response.json()['url'],
     )
@@ -200,6 +212,14 @@ def payment(request):
 
 @login_required
 def lk(request):
+    
+    payload = dict(request.GET.items())
+    if payload and 'ecom_transaction_id' in payload:
+        order = Order.objects.get(payment_id=payload['ecom_transaction_id'])
+        print('worked!')
+        if payload['status'] == 'ok':
+            order.status = 1
+            order.save()
     
     user = request.user
     client = Client.objects.get(user=user)
