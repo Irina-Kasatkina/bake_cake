@@ -1,8 +1,10 @@
 import base64
 import requests
-from contextlib import suppress
 
 from django.urls import reverse, reverse_lazy
+
+from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
 from environs import Env
 
@@ -76,7 +78,8 @@ def login_page(request):
             'phone': str(phone),
             'name': client.name,
             'email': client.email,
-        }
+        },
+        'orders': client.client_orders.all(),
     }
     return render(request, 'lk.html', context)
 
@@ -166,8 +169,12 @@ def payment(request):
     order.save()
     
     domain = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])[0]
-
-    success_url = 'http://{domain}{path}'.format(domain=domain, path=reverse('lk'))
+    
+    if settings.DEBUG:
+        success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
+    else:
+        success_url = 'http://{domain}{path}'.format(domain=domain, path=reverse('lk'))
+    
     data = {    
         'merchantId': env('KASSA_LOGIN'),
         'amount': price*100,
@@ -189,6 +196,12 @@ def payment(request):
     )
     response.raise_for_status()
     
+    parsed_url = urlparse(response.json()['url'])
+    payment_id = parse_qs(parsed_url.query)['id'][0]
+
+    order.payment_id = payment_id
+    order.save()
+    
     return redirect(
         to=response.json()['url'],
     )
@@ -196,6 +209,14 @@ def payment(request):
 
 @login_required
 def lk(request):
+    
+    payload = dict(request.GET.items())
+    if payload and 'ecom_transaction_id' in payload:
+        order = Order.objects.get(payment_id=payload['ecom_transaction_id'])
+        print('worked!')
+        if payload['status'] == 'ok':
+            order.status = 1
+            order.save()
     
     user = request.user
     client = Client.objects.get(user=user)
@@ -217,6 +238,7 @@ def lk(request):
             'phone': str(client.phone),
             'name': client.name,
             'email': client.email,
-        }
+        },
+        'orders': client.client_orders.all(),
     }
     return render(request, 'lk.html', context)

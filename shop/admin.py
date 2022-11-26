@@ -32,6 +32,7 @@ class Order(admin.ModelAdmin):
     list_display = [
         'id',
         'get_name',
+        'status',
         'get_phone',
     ]
     @admin.display(ordering='client__name', description='Name')

@@ -41,6 +41,14 @@ class Client(models.Model):
         return f'{self.name}'
 
 
+STATUS_CHOICES = [
+    (0, 'Не оплачен'),
+    (1, 'Оплачен'),
+    (2, 'В доставке'),
+    (3, 'Доставлен'),
+]
+
+
 class Order(models.Model):
     client = models.ForeignKey(
         Client,
@@ -48,7 +56,17 @@ class Order(models.Model):
         related_name='client_orders',
         on_delete=models.CASCADE
     )
-
+    status = models.CharField(
+        'Статус заказа',
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=(0, 'Не оплачен'),
+    )
+    payment_id = models.IntegerField(
+        'ID оплаты Kassa 24',
+        null=True,
+        blank=True,
+    )
     date = models.DateField('Дата доставки')
     time = models.TimeField('Время доставки')
     delivcomments = models.TextField(
