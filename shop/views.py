@@ -36,13 +36,13 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
-    client = ''
+    client, context = None, None
     phone = request.COOKIES.get('phone')
     if phone:
         with suppress(ObjectDoesNotExist):
             client = Client.objects.get(phone=phone)
-
-    context = get_context(client)
+    if client:
+        context = get_context(client)
     return render(request, 'index.html', context)
 
 
