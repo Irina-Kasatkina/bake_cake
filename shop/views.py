@@ -21,7 +21,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
-from shop.models import Cake, Client, Order
+from shop.models import Cake, Client, Order, Source
 
 class ClientSerializer(ModelSerializer):
     class Meta:
@@ -42,6 +42,14 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
+    utm_source = request.GET.get('utm_source', '')
+    if utm_source:
+        source, created = Source.objects.get_or_create(
+            source_name=utm_source
+        )
+        source.count += 1
+        source.save()
+
     context = {
         'is_debug': settings.DEBUG,
     }
@@ -195,7 +203,7 @@ def payment(request):
         json=data,
     )
     response.raise_for_status()
-    
+
     parsed_url = urlparse(response.json()['url'])
     payment_id = parse_qs(parsed_url.query)['id'][0]
 
