@@ -50,11 +50,11 @@ def get_context(client):
     return {
         'is_debug': settings.DEBUG,
         'client_details': {
-            'phone': str(client.phone) if client else '',
-            'name': client.name if client else '',
-            'email': client.email if client else '',
-            'address': client.address if client else '',
-            'client_label': '' if (not client or not client.name) else client.name[:1],
+            'phone': str(client.phone),
+            'name': client.name,
+            'email': client.email,
+            'address': client.address,
+            'client_label': '' if (not client.name) else client.name[:1],
         },
         'orders': client.client_orders.all(),
     }
