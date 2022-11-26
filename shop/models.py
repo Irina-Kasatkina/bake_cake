@@ -56,11 +56,10 @@ class Order(models.Model):
         related_name='client_orders',
         on_delete=models.CASCADE
     )
-    status = models.CharField(
+    status = models.IntegerField(
         'Статус заказа',
-        max_length=20,
         choices=STATUS_CHOICES,
-        default=(0, 'Не оплачен'),
+        default=0,
     )
     payment_id = models.IntegerField(
         'ID оплаты Kassa 24',
@@ -135,30 +134,25 @@ class Cake(models.Model):
         related_name='cake',
         on_delete=models.CASCADE
     )
-    lvls = models.CharField(
+    lvls = models.IntegerField(
         'уровни',
-        max_length=1,
         choices=LEVEL_CHOICES,
     )
-    form = models.CharField(
+    form = models.IntegerField(
         'форма',
-        max_length=2,
         choices=SHAPE_CHOICES,
     )
-    topping = models.CharField(
+    topping = models.IntegerField(
         'топпинг',
-        max_length=2,
         choices=TOPPING_CHOICES,
     )
-    berries = models.CharField(
+    berries = models.IntegerField(
         'ягоды',
-        max_length=2,
         choices=BERRY_CHOICES,
         default=('0', 'нет'),
     )
-    decor = models.CharField(
+    decor = models.IntegerField(
         'декор',
-        max_length=2,
         choices=DECOR_CHOICES,
         default=('0', 'нет'),
     )
