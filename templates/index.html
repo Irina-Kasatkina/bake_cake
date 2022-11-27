@@ -323,8 +323,8 @@
   			    		  </div>
   				    	  <div class="col-6 col-lg-4 d-flex flex-column">
   				    		  <v-field v-model="Address" :class="Address ? 'cake__border_blue': ''" type="text" name="address" id="address" placeholder="Введите ваш адрес" class="form-control my-3 cake__textinput"></v-field>
-  				    		<v-field v-model="Dates" :class="Dates ? 'cake__border_blue': ''" type="date" name="date" id="date" placeholder="ДД.ММ.ГГ" class="form-control my-3 cake__textinput"></v-field>
-  				    		  <v-field v-model="Time" :class="Time ? 'cake__border_blue': ''" type="time" name="time" id="time" placeholder="00:00" class="form-control my-3 cake__textinput"></v-field>
+  				    		<v-field v-model="Dates" :class="Dates ? 'cake__border_blue': ''" type="date" name="date" id="date" placeholder="ДД.ММ.ГГ" class="form-control my-3 cake__textinput" onchange="calculate_date();"></v-field>
+  				    		  <v-field v-model="Time" :class="Time ? 'cake__border_blue': ''" type="time" name="time" id="time" placeholder="00:00" class="form-control my-3 cake__textinput" onchange="calculate_date();"></v-field>
   			    		  </div>
   			    	  </div>
   		    		  <div class="row mt-3">
@@ -347,6 +347,25 @@
     </div>
 {% endblock main %}
 {% block footer_scripts %}
+	<script>
+		function calculate_date() {
+			var date_element = document.getElementById('date');
+			var time_element = document.getElementById('time');
+			date_and_time = date_element.value + ' ' + time_element.value
+			parsed_time = Date.parse(date_and_time);
+			const today_date = new Date();
+			parsed_today_date = Date.parse(today_date)
+			difference = (parsed_time - parsed_today_date) / 1000 / 60
+			if (difference < 0) {
+				console.log('Date cant be in past')
+			} else if (difference < 1440) {
+				console.log('Less than 24 hours')
+			} else {
+				console.log('All good')
+			}
+
+		}
+	</script>
   <script src="{% static 'index.js' %}"></script>
   {% if not client_details.phone %}
     <script src="{% static 'registration.js' %}"></script>
