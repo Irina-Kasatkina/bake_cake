@@ -9,8 +9,8 @@ class OrderResource(resources.ModelResource):
     
     class Meta:
         model = Order
-        fields = ('id', 'client__name', 'client__phone', 'date', 'time', 'cost',)
-        export_order = ('id', 'client__name', 'client__phone', 'date', 'time', 'cost',)
+        fields = ('id', 'client__name', 'client__phone', 'date', 'address', 'time', 'cost',)
+        export_order = ('id', 'client__name', 'client__phone', 'date', 'address', 'time', 'cost',)
 
 
 class CakeInline(admin.TabularInline):
@@ -29,6 +29,7 @@ class Client(admin.ModelAdmin):
         'name',
         'phone',
         'email',
+        'address',
     ]
     search_fields = [
         'name',
@@ -48,6 +49,7 @@ class Order(ExportMixin, admin.ModelAdmin):
         'id',
         'get_name',
         'get_status_display',
+        'address',
         'get_phone',
     ]
     @admin.display(ordering='client__name', description='Name')

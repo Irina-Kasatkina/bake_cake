@@ -5,7 +5,7 @@ from datetime import datetime
 from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -143,6 +143,7 @@ def payment(request):
         client = client,
         date = order_serializer.validated_data['date'],
         time = order_serializer.validated_data['time'],
+        address = order_serializer.validated_data['address'],
         delivcomments = order_serializer.validated_data['delivcomments'],
     )
     
@@ -235,4 +236,13 @@ def lk(request):
             client.address = client_serializer.validated_data['address']
         client.save()
 
-    return render(request, 'lk.html', get_context(client))
+    response = render(request, 'lk.html', get_context(client))
+    response.set_cookie('phone', str(client.phone))
+    return response
+
+
+def logout_page(request):
+    logout(request)
+    response = render(request, 'index.html')
+    response.delete_cookie('phone')
+    return response
