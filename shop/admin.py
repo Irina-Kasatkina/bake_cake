@@ -2,7 +2,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export.admin import ExportMixin
 
-from .models import Cake, Client, Order
+from .models import Cake, Client, Order, Source
 
 
 class OrderResource(resources.ModelResource):
@@ -19,12 +19,12 @@ class CakeInline(admin.TabularInline):
 
 
 @admin.register(Cake)
-class Cake(admin.ModelAdmin):
+class CakeAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Client)
-class Client(admin.ModelAdmin):
+class ClientAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'phone',
@@ -40,10 +40,9 @@ class Client(admin.ModelAdmin):
 
 
 @admin.register(Order)
+
 class Order(ExportMixin, admin.ModelAdmin):
-    
     ExportMixin.to_encoding = 'utf-8-sig'
-    
     resource_classes = [OrderResource]
     list_display = [
         'id',
@@ -67,3 +66,10 @@ class Order(ExportMixin, admin.ModelAdmin):
     ]
 
     inlines = [CakeInline]
+
+@admin.register(Source)
+class SourceAdmin(admin.ModelAdmin):
+    list_display = [
+        'source_name',
+        'count',
+    ]
