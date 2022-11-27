@@ -277,13 +277,9 @@
   		    			  </div>
   			    		  <div class="col-6 col-lg-4 d-flex flex-column">
   			    			  <div class="position-relative pb-1">
-								{% if client %}
-									<v-field v-model="Name" :class="Name ? 'cake__border_blue': ''" type="text" name="name" id="name" placeholder="Введите ваше имя" class="form-control my-3 cake__textinput">{{client.name}}</v-field>
-								{% else %}
   				    			  <v-field v-model="Name" :class="Name ? 'cake__border_blue': ''" type="text" name="name" id="name" placeholder="Введите ваше имя" class="form-control my-3 cake__textinput"></v-field>
   				    			  <v-field v-model="Name" type="text" name="name_format" class="d-none"></v-field>
   				    			  <error-message name="name_format" class="position-absolute bottom-0 cake_pink fs_12"></error-message>
-								{% endif %}
   					    	  </div>
   					    	  <div class="position-relative pb-1">
   					    		  <v-field v-model="Phone" :class="Phone ? 'cake__border_blue': ''" type="tel" name="phone" id="phone" placeholder="Введите номер" class="form-control my-3 cake__textinput"></v-field>
