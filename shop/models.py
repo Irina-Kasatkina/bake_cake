@@ -76,6 +76,11 @@ class Order(models.Model):
         null=True,
         blank=True,
     )
+    address = models.TextField(
+        'Адрес заказа',
+        blank=True,
+        null=True,
+    )
     date = models.DateField('Дата доставки')
     time = models.TimeField('Время доставки')
     delivcomments = models.TextField(
