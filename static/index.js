@@ -100,7 +100,7 @@ Vue.createApp({
                 Forms: ['не выбрано', 'Круг', 'Квадрат', 'Прямоугольник'],
                 Toppings: ['не выбрано', 'Без', 'Белый соус', 'Карамельный', 'Кленовый', 'Черничный', 'Молочный шоколад', 'Клубничный'],
                 Berries: ['нет', 'Ежевика', 'Малина', 'Голубика', 'Клубника'],
-                Decors: [ 'нет', 'Фисташки', 'Безе', 'Фундук', 'Пекан', 'Маршмеллоу', 'Марципан']
+                Decors: [ 'нет', 'Фисташки', 'Безе', 'Фундук', 'Пекан', 'Маршмеллоу', 'Марципан'],
             },
             Costs: {
                 Levels: [0, 400, 750, 1100],
@@ -119,10 +119,10 @@ Vue.createApp({
             Comments: '',
             Designed: false,
 
-            Name: '',
-            Phone: null,
-            Email: null,
-            Address: null,
+            Name: jsClientDetails.name,
+            Phone: jsClientDetails.phone,
+            Email: jsClientDetails.email,
+            Address: jsClientDetails.address,
             Dates: null,
             Time: null,
             DelivComments: ''

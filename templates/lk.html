@@ -59,7 +59,6 @@
   	    	</v-form>
   	    	<h2 class="fs_30 cake_pink mt-5">Мои заказы</h2>
 			{% if orders %}
-				<h2 class="fs_40 cake_pink mt-5">Мои заказы</h2>
 				{% for order in orders %}
 					{% for cake in order.cake.all %}
 						<section class="my-2">
