@@ -10,6 +10,7 @@ Vue.createApp({
             Name: jsClientDetails.name,
             Phone: jsClientDetails.phone,
             Email: jsClientDetails.email,
+            Address: jsClientDetails.address,
             Schema: {
                 name_format: (value) => {
                     const regex = /^[a-zA-Zа-яА-я]+$/
@@ -38,6 +39,12 @@ Vue.createApp({
                     }
                     if ( !regex.test(value)) {
                         return '⚠ Формат почты нарушен';
+                    }
+                    return true;
+                },
+                address_format: (value) => {
+                    if (value) {
+                        return true;
                     }
                     return true;
                 }

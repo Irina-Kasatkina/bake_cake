@@ -83,12 +83,14 @@ def login_page(request):
     context = {
         'is_debug': settings.DEBUG,
         'client_details': {
-            'phone': str(phone),
+            'phone': str(client.phone),
             'name': client.name,
             'email': client.email,
+            'address': client.address,
         },
         'orders': client.client_orders.all(),
     }
+    print(context)
     return render(request, 'lk.html', context)
 
 
@@ -231,13 +233,15 @@ def lk(request):
     
     if request.method == 'POST':
         payload = dict(request.POST.items())
+
         client_serializer = ClientSerializer(data=payload)
         client_serializer.is_valid(raise_exception=True)
         client.name = client_serializer.validated_data['name']
         client.phone = client_serializer.validated_data['phone']
         client.email = client_serializer.validated_data['email']
-        if payload.get('address'):
-            client.address = client_serializer.validated_data['address']
+        client.address = client_serializer.validated_data['address']
+        # if payload.get('address'):
+        #     client.address = client_serializer.validated_data['address']
         client.save()
         
     context = {
@@ -246,6 +250,7 @@ def lk(request):
             'phone': str(client.phone),
             'name': client.name,
             'email': client.email,
+            'address': client.address,
         },
         'orders': client.client_orders.all(),
     }
