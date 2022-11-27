@@ -14,7 +14,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_http_methods
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from shop.models import Cake, Client, Order
+from shop.models import Cake, Client, Order, Source
 
 
 class ClientSerializer(ModelSerializer):
@@ -36,8 +36,6 @@ class CakeSerializer(ModelSerializer):
 
 
 def index(request):
-    # Client.objects.all().delete()
-    # print([client.name for client in Client.objects.all()])
     client = None
     phone = request.COOKIES.get('phone')
     if phone:
@@ -48,6 +46,14 @@ def index(request):
         context = get_context(client)
     else:
         context = {'is_debug': settings.DEBUG}
+
+    utm_source = request.GET.get('utm_source', '')
+    if utm_source:
+        source, created = Source.objects.get_or_create(
+            source_name=utm_source
+        )
+        source.count += 1
+        source.save()
 
     return render(request, 'index.html', context)
 
@@ -89,6 +95,7 @@ def login_page(request):
             'address': '',
         },
     )
+
     response = render(request, 'lk.html', get_context(client))
     response.set_cookie('phone', str(phone))
     return response
@@ -204,7 +211,7 @@ def payment(request):
         json=data,
     )
     response.raise_for_status()
-    
+
     parsed_url = urlparse(response.json()['url'])
     payment_id = parse_qs(parsed_url.query)['id'][0]
 
@@ -232,13 +239,15 @@ def lk(request):
     
     if request.method == 'POST':
         payload = dict(request.POST.items())
+
         client_serializer = ClientSerializer(data=payload)
         client_serializer.is_valid(raise_exception=True)
         client.name = client_serializer.validated_data['name']
         client.phone = client_serializer.validated_data['phone']
         client.email = client_serializer.validated_data['email']
-        if payload.get('address'):
-            client.address = client_serializer.validated_data['address']
+        client.address = client_serializer.validated_data['address']
+        # if payload.get('address'):
+        #     client.address = client_serializer.validated_data['address']
         client.save()
 
     return render(request, 'lk.html', get_context(client))
