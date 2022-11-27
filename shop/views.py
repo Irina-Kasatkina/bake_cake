@@ -1,27 +1,21 @@
 import base64
 import requests
-
-from django.urls import reverse, reverse_lazy
-
-from urllib.parse import urlparse
-from urllib.parse import parse_qs
-
-from environs import Env
-
-env = Env()
-env.read_env()
-
+from contextlib import suppress
 from datetime import datetime
+from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.views.decorators.http import require_http_methods
-from rest_framework.serializers import Serializer, ModelSerializer
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.decorators.http import require_http_methods
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from shop.models import Cake, Client, Order, Source
+
 
 class ClientSerializer(ModelSerializer):
     class Meta:
@@ -32,16 +26,17 @@ class ClientSerializer(ModelSerializer):
 class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
-        exclude = ['client',]
+        exclude = ['client']
 
 
 class CakeSerializer(ModelSerializer):
     class Meta:
         model = Cake
-        exclude = ['order',]
+        exclude = ['order']
 
 
 def index(request):
+
     utm_source = request.GET.get('utm_source', '')
     if utm_source:
         source, created = Source.objects.get_or_create(
@@ -50,10 +45,29 @@ def index(request):
         source.count += 1
         source.save()
 
-    context = {
-        'is_debug': settings.DEBUG,
-    }
+    client, context = None, None
+    phone = request.COOKIES.get('phone')
+    if phone:
+        with suppress(ObjectDoesNotExist):
+            client = Client.objects.get(phone=phone)
+    if client:
+        context = get_context(client)
+
     return render(request, 'index.html', context)
+
+
+def get_context(client):
+    return {
+        'is_debug': settings.DEBUG,
+        'client_details': {
+            'phone': str(client.phone),
+            'name': client.name,
+            'email': client.email,
+            'address': client.address,
+            'client_label': '' if (not client.name) else client.name[:1],
+        },
+        'orders': client.client_orders.all(),
+    }
 
 
 @require_http_methods(['POST'])
@@ -80,18 +94,9 @@ def login_page(request):
         },
     )
 
-    context = {
-        'is_debug': settings.DEBUG,
-        'client_details': {
-            'phone': str(client.phone),
-            'name': client.name,
-            'email': client.email,
-            'address': client.address,
-        },
-        'orders': client.client_orders.all(),
-    }
-    print(context)
-    return render(request, 'lk.html', context)
+    response = render(request, 'lk.html', get_context(client))
+    response.set_cookie('phone', str(phone))
+    return response
 
 
 def calculate_price(lvls, form, topping, berries=0, decor=0, words=''):
@@ -178,23 +183,22 @@ def payment(request):
     order.cost = price
     order.save()
     
-    domain = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])[0]
-    
+    domain = settings.ALLOWED_HOSTS[0]    
     if settings.DEBUG:
         success_url = 'http://{domain}:8000{path}'.format(domain=domain, path=reverse('lk'))
     else:
         success_url = 'http://{domain}{path}'.format(domain=domain, path=reverse('lk'))
     
     data = {    
-        'merchantId': env('KASSA_LOGIN'),
+        'merchantId': settings.KASSA_LOGIN,
         'amount': price*100,
         'successUrl': success_url,
         'returnUrl': success_url,
         'description': 'Test payment for {}'.format(client.email),
         'demo': True,
     }
-    
-    login_pass = '{}:{}'.format(env('KASSA_LOGIN'), env('KASSA_PASSWORD'))
+
+    login_pass = f'{settings.KASSA_LOGIN}:{settings.KASSA_PASSWORD}'
     
     token = base64.b64encode(str.encode(login_pass)).decode('utf-8')
     headers = {'Authorization': f'Basic {token}'}
@@ -243,15 +247,5 @@ def lk(request):
         # if payload.get('address'):
         #     client.address = client_serializer.validated_data['address']
         client.save()
-        
-    context = {
-        'is_debug': settings.DEBUG,
-        'client_details': {
-            'phone': str(client.phone),
-            'name': client.name,
-            'email': client.email,
-            'address': client.address,
-        },
-        'orders': client.client_orders.all(),
-    }
-    return render(request, 'lk.html', context)
+
+    return render(request, 'lk.html', get_context(client))

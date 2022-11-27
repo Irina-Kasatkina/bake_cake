@@ -2,9 +2,6 @@
 {% load static %}
 {% block title %}Личный кабинет{% endblock title %}
 {% block main %}
-  {% verbatim %}
-  {% endverbatim %}
-  {{ client_details|json_script:"client-details" }}
   <div class="container mt-header mb-5">
     <div class="row mt-5">
     	<div class="col-12 col-xxl-6 d-flex justify-content-center">
@@ -131,19 +128,5 @@
     </div>
 {% endblock main %}
 {% block footer_scripts %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/loglevel/1.6.8/loglevel.min.js" integrity="sha256-O/iFn3B3kEV/q5PPVW8TVpRhoywaK7NN4UjdnBO9DXo=" crossorigin="anonymous"></script>
-  <script>
-    function loadJSON(elementId){
-      let element = document.getElementById(elementId);
-
-      if (!element){
-        log.error(`Not found element with id '${elementId}'.`)
-        return null;
-      }     
-      return JSON.parse(element.textContent);
-    }
-
-    let jsClientDetails = loadJSON("client-details")
-  </script>
   <script src="{% static 'lk.js' %}"></script>
 {% endblock footer_scripts %}
