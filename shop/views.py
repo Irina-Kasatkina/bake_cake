@@ -237,7 +237,10 @@ def lk(request):
             order.save()
     
     user = request.user
-    client = Client.objects.get(user=user)
+    try:
+        client = Client.objects.get(user=user)
+    except Client.DoesNotExist or Client.MultipleObjectsReturned:
+        return render(request, 'index.html')
     
     if request.method == 'POST':
         payload = dict(request.POST.items())
