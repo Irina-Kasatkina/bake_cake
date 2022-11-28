@@ -194,7 +194,7 @@ def payment(request):
     
     data = {    
         'merchantId': settings.KASSA_LOGIN,
-        'amount': price*100,
+        'amount': int(price)*100,
         'successUrl': success_url,
         'returnUrl': success_url,
         'description': 'Test payment for {}'.format(client.email),
@@ -230,7 +230,6 @@ def lk(request):
     payload = dict(request.GET.items())
     if payload and 'ecom_transaction_id' in payload:
         order = Order.objects.get(payment_id=payload['ecom_transaction_id'])
-        print('worked!')
         if payload['status'] == 'ok':
             order.status = 1
             order.save()

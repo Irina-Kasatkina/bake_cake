@@ -327,6 +327,9 @@
   				    		  <v-field v-model="Time" :class="Time ? 'cake__border_blue': ''" type="time" name="time" id="time" placeholder="00:00" class="form-control my-3 cake__textinput" onchange="calculate_date();"></v-field>
   			    		  </div>
   			    	  </div>
+					  <div id="speed-message" style="color:red; display: none;">
+						<span>Срочный заказ (менее 24 ч.) увеличивает стоимость заказа на 20%</span>
+					  </div>
   		    		  <div class="row mt-3">
   			    		  <div class="col-12 col-md-6">
   			    			  <label for="deliv-comment" class="cake_blue">Комментарий для курьера</label>
@@ -334,7 +337,7 @@
   			    		  </div>
   			    		  <div class="col-12 col-md-6 d-flex flex-column align-items-center align-items-md-end mt-3 mt-md-0">
   			    			  <div class="d-flex">
-  			    				  <span class="cake_pink fs_30 fw-bold me-2">Итого: {{ Cost }}₽</span>
+  			    				  <span class="cake_pink fs_30 fw-bold me-2" id="final-price">Итого: {{ Cost }}₽</span>
   			    			  </div>
   				    		  <button type="submit" class="btn btn_hover text-white rounded-pill mt-3 px-5 shadow-none cake__button cake__bg_pink">К оплате</button>
   				    	  </div>
@@ -356,12 +359,22 @@
 			const today_date = new Date();
 			parsed_today_date = Date.parse(today_date)
 			difference = (parsed_time - parsed_today_date) / 1000 / 60
+			var cost = document.getElementById('cost')
+			var final_price = document.getElementById('final-price')
+			var speed_message = document.getElementById('speed-message')
+			cost_content = cost.textContent;
+			price = parseInt(cost_content.substring(0,cost_content.length-1))
+			new_price = price * 1.2
 			if (difference < 0) {
 				console.log('Date cant be in past')
 			} else if (difference < 1440) {
 				console.log('Less than 24 hours')
+				final_price.innerHTML = String(new_price+"₽")
+				speed_message.style.display = "block"
 			} else {
-				console.log('All good')
+				console.log('OK')
+				final_price.innerHTML = String(cost_content)
+				speed_message.style.display = "none"
 			}
 
 		}
