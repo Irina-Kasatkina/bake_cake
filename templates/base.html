@@ -50,7 +50,7 @@
               <a class="nav-link fw-lighter cake_blue" href="{% url 'index' %}#step2">Каталог</a>
             </li>
             <li class="nav-item me-5">
-              <a class="nav-link fw-lighter cake_blue" href="#step4">Оплата и доставка</a>
+              <a class="nav-link fw-lighter cake_blue" href="{% url 'index' %}#delivery">Оплата и доставка</a>
             </li>
             <li class="nav-item me-5">
               <a class="nav-link fw-lighter cake_blue" href="#Contacts">Контакты</a>
@@ -60,9 +60,10 @@
               <small class="fw-lighter text-decoration-none fs_12 cake_blue">Пн - Вс 10:00—20:00</small>
             </li>
             <li class="nav-item d-flex align-items-center">
-              <a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#">
-                <img src="{% static 'img/shopping-cart.svg' %}" alt="">
-                <!--метка на иконке, убрать класс d-none чтоб появилась-->
+              <!--Корзина, убрать класс d-none чтоб появилась-->
+              <a class="nav-link fw-lighter me-1 cake_blue position-relative d-none" href="#">
+                <img src="{% static 'img/shopping-cart.svg' %}" alt="Кнопка корзины">
+                <!--метка на иконке корзины, убрать класс d-none чтоб появилась-->
                 <span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none">1</span>
               </a>
                 {% if client_details.phone %}
@@ -78,7 +79,9 @@
                   <span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none"></span>
                 </a>
                 {% endif %}
-              </span>
+                <a class="nav-link fw-lighter cake_grey fs_12" href="{% url 'lk' %}">
+                   {{ client_details.name }}
+                </a>
             </li>
           </ul>
         </div>
@@ -101,14 +104,14 @@
             </div>
           </div>
           <div class="col-4 col-xl-2 d-flex flex-column">
-            <a href="#" class="text-decoration-none text-white">На свадьбу</a>
-            <a href="#" class="text-decoration-none text-white">На день рождения</a>
-            <a href="#" class="text-decoration-none text-white">На чаепитие</a>
+            <a href="{% url 'index' %}#step2" class="text-decoration-none text-white">На свадьбу</a>
+            <a href="{% url 'index' %}#step2" class="text-decoration-none text-white">На день рождения</a>
+            <a href="{% url 'index' %}#step2" class="text-decoration-none text-white">На чаепитие</a>
           </div>
           <div class="col-4 col-xl-2 d-flex flex-column">
-            <a href="#step3" class="text-decoration-none text-white">Создать торт</a>
-            <a href="#step2" class="text-decoration-none text-white">Каталог</a>
-            <a href="#Contacts" class="text-decoration-none text-white">Контакты</a>
+            <a href="{% url 'index' %}#step3" class="text-decoration-none text-white">Создать торт</a>
+            <a href="{% url 'index' %}#step2" class="text-decoration-none text-white">Каталог</a>
+            <a href="{% url 'index' %}#delivery" class="text-decoration-none text-white">Оплата и доставка</a>
           </div>
           <div class="col-12 col-xl-6 d-flex flex-column align-items-start align-items-xl-end mt-3 mt-xl-0">
             <a href="https://vk.com/devmanorg"><img src="{% static 'img/vk.svg' %}" alt="VK" class="mb-3 mb-xl-5"></a>
