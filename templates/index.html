@@ -38,7 +38,12 @@
     				    </v-form>
     				    <div class="modal-footer d-flex flex-column justify-content-between align-items-center text-center border-0 mx-5">
     					    <p class="fs_12 cake_grey">
-    					        {{ Step === 'Number' ? 'Нажимая на кнопку, вы соглашаетесь на обработку персональных данных в соответствии с политикой конфиденциальности' : Step === 'Code' ? 'Осталось времени: 05:00' : '' }}
+    					        {{ Step === 'Number' ? 'Нажимая на кнопку, вы соглашаетесь на обработку персональных данных в соответствии с ' : Step === 'Code' ? 'Осталось времени: 05:00' : '' }}
+                      {% endverbatim %}
+                      <a href="{% url 'confidentiality' %}" target="_blank" class="text-decoration-none cake_pink fs_12">
+                      {% verbatim %}
+                        {{ Step === 'Number' ? 'политикой конфиденциальности' : '' }}
+                      </a>
     					    </p>
     					    <a href="#" v-if="Step === `Code`" @click.prevent="ToRegStep1" class="text-decoration-none cake_pink fs_12">изменить данные</a>
     				    </div>

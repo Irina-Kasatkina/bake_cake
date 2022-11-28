@@ -28,6 +28,7 @@ urlpatterns = [
     path('payment', views.payment, name='payment'),
     path('lk/', views.lk, name='lk'),
     path('admin/', admin.site.urls),
+    path('confidentiality/', views.confidentiality, name='confidentiality')
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

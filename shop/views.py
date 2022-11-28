@@ -2,6 +2,7 @@ import base64
 import requests
 from contextlib import suppress
 from datetime import datetime
+from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
@@ -9,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_http_methods
@@ -260,3 +262,14 @@ def logout_page(request):
     response = render(request, 'index.html')
     response.delete_cookie('phone')
     return response
+
+
+def confidentiality(request):
+    try:
+        pdf_filename = 'Agreement_on_processing_of_personal_data.pdf'
+        with open(Path(settings.STATICFILES_DIRS[0]) / 'pdf' / pdf_filename, 'rb') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = f'inline;filename={pdf_filename}'
+            return response
+    except FileNotFoundError:
+        raise Http404()
